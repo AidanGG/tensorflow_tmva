@@ -1,13 +1,28 @@
 import ROOT
 import tensorflow as tf
+import numpy as np
 
 
-def tntuple_to_arrays(ntuple, classifier_index):
-    data = []
-    classifier_data = []
+def vector_to_one_hot(vector, classes):
+    one_hot = []
+
+    for i in range(classes):
+        one_hot.append([])
+
+    for i in range(len(vector)):
+        for j in range(classes):
+            one_hot[j].append(0)
+            if vector[i] == j:
+                one_hot[j][i] = 1
+    return one_hot
+
+
+def tntuple_to_arrays(ntuple, classifier_index, classes):
+    x = []
+    classifier = []
 
     for column in range(ntuple.GetNvar() - 1):
-        data.append([])
+        x.append([])
 
     for row in range(ntuple.GetEntries()):
         classifier_marker = True
@@ -15,11 +30,13 @@ def tntuple_to_arrays(ntuple, classifier_index):
 
         for column in range(ntuple.GetNvar()):
             if column == classifier_index:
-                classifier_data.append(ntuple.GetArgs()[column])
+                classifier.append(ntuple.GetArgs()[column])
                 classifier_marker = False
             elif classifier_marker:
-                data[column].append(ntuple.GetArgs()[column])
+                x[column].append(ntuple.GetArgs()[column])
             else:
-                data[column - 1].append(ntuple.GetArgs()[column])
+                x[column - 1].append(ntuple.GetArgs()[column])
 
-    return data, classifier_data
+    y = vector_to_one_hot(classifier, classes)
+
+    return x, y
