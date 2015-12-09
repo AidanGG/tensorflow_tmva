@@ -2,7 +2,7 @@ import ROOT
 import tensorflow as tf
 
 
-def tntuple_to_tensor(ntuple, classifier_index):
+def tntuple_to_arrays(ntuple, classifier_index):
     data = []
     classifier_data = []
 
