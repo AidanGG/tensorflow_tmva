@@ -1,6 +1,4 @@
 import ROOT
-import tensorflow as tf
-import numpy as np
 
 
 def vector_to_one_hot(vector, classes):
@@ -40,12 +38,8 @@ def tntuples_to_one_hot(tntuples):
 
     for i in range(len(tntuples)):
         for j in range(tntuples[i].GetEntries()):
-            entry = []
-            for k in range(len(tntuples)):
-                if i == k:
-                    entry.append(1)
-                else:
-                    entry.append(0)
+            entry = len(tntuples) * [0]
+            entry[i] = 1
             one_hot.append(entry)
 
     return one_hot
