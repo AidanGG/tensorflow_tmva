@@ -1,6 +1,6 @@
 import ROOT
 import numpy as np
-from root_numpy import root2array, root2rec, tree2rec
+from root_numpy import root2array, root2rec, tree2rec, tree2array
 from root_numpy.testdata import get_filepath
 
 
@@ -19,30 +19,13 @@ def ttrees_to_one_hot(ttrees):
     return one_hot
 
 
-# def ttrees_to_arrays(ttrees, branches):
-#     one_hot = ttrees_to_one_hot(ttrees)
-#     x = []
-#
-#     for i in range(len(ttrees)):
-#         ttrees[i].SetBranchStatus("*", 0)
-#         for j in range(len(branches)):
-#             ttrees[i].SetBranchStatus(branches[j], 1)
-#
-#         for row in range(ttrees[i].GetEntries()):
-#             entry = []
-#             for column in range(len(branches)):
-#                 entry.append(0)
-#                 ttrees[i].SetBranchAddress(branches[column], entry[column])
-#             ttrees[i].GetEntry(row)
-#             x.append(entry)
-#
-#     return x, one_hot
-#
-# x = ROOT.TNtuple("x", "", "a:b")
-# y = ROOT.TNtuple("y", "", "a:b")
-#
-# x.Fill(1, 2)
-# x.Fill(5, 6)
-# y.Fill(3, 4)
-#
-# print ttrees_to_one_hot([x, y])
+def ttrees_to_arrays(ttrees, branches):
+    one_hot = ttrees_to_one_hot(ttrees)
+
+    for i in range(len(ttrees)):
+        if i == 0:
+            x = tree2array(ttrees[i], branches=branches)
+        else:
+            x = np.hstack((x, tree2array(ttrees[i], branches=branches)))
+
+    return np.transpose(x), one_hot
