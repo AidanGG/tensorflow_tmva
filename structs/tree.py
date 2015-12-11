@@ -28,4 +28,4 @@ def ttrees_to_arrays(ttrees, branches):
         else:
             x = np.hstack((x, tree2array(ttrees[i], branches=branches)))
 
-    return np.array(x.tolist()), one_hot
+    return np.reshape(x.view(np.float32), (-1, len(x.dtype.names))), one_hot
