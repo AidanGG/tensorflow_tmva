@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 def mean_square_error(model, data):
-    # cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
+    cost = tf.reduce_mean(tf.square(tf.sub(model, data)))
     return cost
 
 
