@@ -13,14 +13,15 @@ def model(input_dim, output_dim, hidden_layers, neuron_type="sigmoid",
     x = tf.placeholder(tf.float32, [None, input_dim])
     layer_neurons = [x]
     for layer in range(len(all_layers) - 1):
-        neuron = neuron_type(neuron_type, neuron_input_type(
-            neuron_input_type, layer_weights[layer], layer_biases[layer]))
-        # Combine neurons into layer here
-        layer_neurons.append(working_layer)
-    return x, layer_neurons[-1]
+        neuron_layer = activation(neuron_type, synapse(
+            neuron_input_type, layer_neurons[layer], layer_weights[layer],
+            layer_biases[layer]))
+        layer_neurons.append(neuron_layer)
+    y = tf.nn.softmax(layer_neurons[-1])
+    return x, y, layer_weights, layer_biases
 
 
-def neuron_type(type, synapse):
+def activation(type, synapse):
     if type == "sigmoid":
         return tf.sigmoid(synapse)
     elif type == "linear":
@@ -31,7 +32,7 @@ def neuron_type(type, synapse):
         return tf.sqrt(tf.exp(tf.neg(tf.square(synapse))))
 
 
-def neuron_input_type(type, input_signal, weights, bias):
+def synapse(type, input_signal, weights, bias):
     if type == "sum":
         return tf.nn.bias_add(tf.matmul(input_signal, weights), bias)
     elif type == "sqsum":
