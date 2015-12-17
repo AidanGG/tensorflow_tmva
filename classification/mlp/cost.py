@@ -1,11 +1,9 @@
 import tensorflow as tf
 
 
-def mean_square_error(model, data):
-    cost = tf.reduce_mean(tf.square(tf.sub(model, data)))
-    return cost
-
-
-def cross_entropy(model, data):
-    cost = -tf.reduce_sum(tf.mul(data, tf.log(model)))
+def cost(model, data, estimator_type="MSE"):
+    if estimator == "CE":
+        cost = -tf.reduce_sum(tf.mul(data, tf.log(model)))
+    else:
+        cost = tf.reduce_mean(tf.square(tf.sub(model, data)))
     return cost
