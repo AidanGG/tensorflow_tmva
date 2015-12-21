@@ -12,12 +12,14 @@ def model(input_dim, output_dim, hidden_layers, neuron_type="sigmoid",
         layer_biases.append(tf.Variable(tf.zeros([all_layers[layer + 1]])))
     x = tf.placeholder(tf.float32, [None, input_dim])
     layer_neurons = [x]
-    for layer in range(len(all_layers) - 1):
+    for layer in range(len(hidden_layers)):
         neuron_layer = activation(neuron_type, synapse(
             neuron_input_type, layer_neurons[layer], layer_weights[layer],
             layer_biases[layer]))
         layer_neurons.append(neuron_layer)
-    y = tf.nn.softmax(layer_neurons[-1])
+    y = tf.nn.softmax(activation("linear", synapse(
+        neuron_input_type, layer_neurons[-1], layer_weights[-1],
+        layer_biases[-1])))
     return x, y, layer_weights, layer_biases
 
 
