@@ -63,3 +63,7 @@ def kernel(x, kernel):
             return 0
     elif kernel == "Gaus":
         return None
+
+
+def kernel_weights():
+    return signal_weight, background_weight
