@@ -3,11 +3,8 @@ import tensorflow as tf
 import numpy as np
 
 
-def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,
-        kernel="Gaus", use_kernel=False):
-    # tr = tf.placeholder(tf.float32, shape=training.shape)
-    # te = tf.placeholder(tf.float32, shape=testing.shape)
-    # distance = metric(training, te, scale_frac)
+def knn(signal, background, testing, branches, nkNN=20, scale_frac=0.8,
+        trim=False, kernel="Gaus", use_kernel=False):
     return None
 
 
@@ -16,12 +13,19 @@ def metric(training, test, scale_frac):
         distance = tf.sqrt(tf.reduce_sum(tf.square(tf.sub(training, test)),
                                          reduction_indices=1, keep_dims=True))
     else:
-        distance = None
+        distance = tf.sqrt(tf.reduce_sum(
+            tf.square(tf.div(tf.sub(training, test),
+                      scale(training, scale_frac))),
+            reduction_indices=1, keep_dims=True))
     return distance
 
 
 def scale(training, scale_frac):
-    return None
+    top = np.ravel(np.percentile(training, (1.0 + scale_frac) * 50.0, axis=0))
+    bottom = np.ravel(np.percentile(training, (1.0 - scale_frac) * 50.0,
+                                    axis=0))
+    scales = top - bottom
+    return scales
 
 
 def trim(training, one_hot):
