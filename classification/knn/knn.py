@@ -3,7 +3,8 @@ import tensorflow as tf
 import numpy as np
 
 
-def knn(k, training, one_hot, testing, scale_frac=0.8, trim=False):
+def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,
+        kernel="Gaus", use_kernel=False):
     # tr = tf.placeholder(tf.float32, shape=training.shape)
     # te = tf.placeholder(tf.float32, shape=testing.shape)
     # distance = metric(training, te, scale_frac)
@@ -19,7 +20,7 @@ def metric(training, test, scale_frac):
     return distance
 
 
-def scales(training, scale_frac):
+def scale(training, scale_frac):
     return None
 
 
@@ -48,3 +49,13 @@ def trim(training, one_hot):
     trimmed_one_hot = np.delete(one_hot, remove, axis=0)
 
     return trimmed_training, trimmed_one_hot
+
+
+def kernel(x, kernel):
+    if kernel == "Poln":
+        if np.absolute(x) < 1:
+            return np.power(1 - np.power(np.absolute(x), 3), 3)
+        else:
+            return 0
+    elif kernel == "Gaus":
+        return None
