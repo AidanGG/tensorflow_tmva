@@ -55,14 +55,14 @@ def trim(training, one_hot):
     return trimmed_training, trimmed_one_hot
 
 
-def kernel(x, kernel):
+def kernel(x, kernel, sigma_fact):
     if kernel == "Poln":
         if np.absolute(x) < 1:
             return np.power(1 - np.power(np.absolute(x), 3), 3)
         else:
             return 0
     elif kernel == "Gaus":
-        return None
+        return np.exp(-np.square(x / sigma_fact) / 2.0)
 
 
 def kernel_weights():
