@@ -48,6 +48,29 @@ def metric(training, test, scale_frac, scales):
     return distance
 
 
+def metric_multiple(training, testing, scale_frac, scales, input_dims):
+    dims = tf.slice(tf.shape(training), [1], [1])
+    training_instances = tf.slice(tf.shape(training), [0], [1])
+    testing_instances = tf.slice(tf.shape(testing), [0], [1])
+
+    re_train = tf.tile(tf.reshape(training, tf.concat(0, [[1, -1], dims])),
+                       tf.concat(0, [testing_instances, [1, 1]]))
+    re_test = tf.tile(tf.reshape(testing, tf.concat(0, [[-1, 1], dims])),
+                      tf.concat(0, [[1], training_instances, [1]]))
+    re_scales = tf.tile(tf.reshape(scales, tf.concat(0, [[1, 1], dims])),
+                        tf.concat(0, [testing_instances, training_instances,
+                                  [1]]))
+
+    if scale_frac == 0:
+        distance = tf.sqrt(tf.reduce_sum(tf.square(tf.sub(re_train, re_test)),
+                           reduction_indices=2, keep_dims=True))
+    else:
+        distance = tf.sqrt(tf.reduce_sum(
+            tf.square(tf.div(tf.sub(training, test), re_scales)),
+            reduction_indices=2, keep_dims=True))
+    return distance
+
+
 def scale(training, scale_frac):
     top = np.ravel(np.percentile(training, (1.0 + scale_frac) * 50.0, axis=0))
     bottom = np.ravel(np.percentile(training, (1.0 - scale_frac) * 50.0,
