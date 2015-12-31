@@ -7,3 +7,9 @@ def cost(data, classes, dims, softness=0):
     b = tf.variable(tf.zeros([1]))
     cost = tf.reduce_sum(tf.reduce_max(tf.concat(1, [1 - classes * (tf.matmul(data, w) + b), tf.zeros_like(classes)]), reduction_indices=1, keep_dims=True), reduction_indices=0) / tf.to_float(points) + softness * tf.reduce_sum(tf.square(w))
     return cost, w, b
+
+
+def kernel_tensor(data, gamma=1):
+    distance = tf.square(tf.abs(tf.matmul(data, tf.neg(data), transpose_b=True)))
+    kernel = tf.exp(tf.neg(gamma) * distance)
+    return kernel
