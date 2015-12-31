@@ -26,4 +26,9 @@ def kernelised_cost(data, classes, dims, points, C=1, gamma=1):
 
     kernel = kernel_tensor(data, gamma)
     transformed = tf.matmul(kernel, beta, transpose_a=True) + offset
-    return tf.matmul(tf.matmul(beta, kernel, transpose_a=True), beta) + C * total_loss(transformed, classes)
+    cost = tf.matmul(tf.matmul(beta, kernel, transpose_a=True), beta) + C * total_loss(transformed, classes)
+    return beta, offset, cost
+
+
+def primal_gradients(beta, data, classes):
+    return tf.reduce_sum(classes * beta * data, reduction_indices=0, keep_dims=1)
