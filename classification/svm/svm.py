@@ -9,7 +9,21 @@ def cost(data, classes, dims, softness=0):
     return cost, w, b
 
 
+def total_loss(transformed, classes):
+    return tf.reduce_sum(tf.reduce_max(tf.concat(1, [tf.zeros_like(classes), tf.sub(tf.ones_like(classes), tf.mul(transformed, classes))]), reduction_indices=1, keep_dims=True))
+
+
 def kernel_tensor(data, gamma=1):
     distance = tf.square(tf.abs(tf.matmul(data, tf.neg(data), transpose_b=True)))
     kernel = tf.exp(tf.neg(gamma) * distance)
     return kernel
+
+
+def kernelised_cost(data, classes, dims, points, C=1, gamma=1):
+    points = tf.slice(tf.shape(data), [0], [1])
+    beta = tf.variable(tf.zeros([points, 1]))
+    offset = tf.variable(tf.zeros([1]))
+
+    kernel = kernel_tensor(data, gamma)
+    transformed = tf.matmul(kernel, beta, transpose_a=True) + offset
+    return tf.matmul(tf.matmul(beta, kernel, transpose_a=True), beta) + C * total_loss(transformed, classes)
