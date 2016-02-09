@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 def cost(model, data, estimator_type="MSE"):
+    """Chooses which cost function to use."""
     if estimator_type == "CE":
         cost = -tf.reduce_sum(tf.mul(data, tf.log(model)))
     elif estimator_type == "MSE":
