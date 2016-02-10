@@ -10,7 +10,7 @@ def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,
 
 def model_single(input_dims, output_dims, scale_frac, scales, nkNN):
     """
-    Forms the mlp neural net architecture.
+    Forms the knn model.
 
     Arguments:
     input_dim -- the dimension of the input data
