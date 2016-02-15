@@ -1,22 +1,17 @@
 import ROOT
 import numpy as np
 import root_numpy as rnp
-from root_numpy import root2array, root2rec, tree2rec, tree2array, array2tree
-from root_numpy.testdata import get_filepath
+import data_set
 
 
 def concat_ttrees_to_array(ttrees, branches=None):
-    """Concatenates multiple TTrees of different classes into one structured
-    array."""
-    struct_arrays = []
-    rec_arrays = []
+    """Concatenates multiple TTrees of different classes into one ndarray."""
+    rec = []
 
     for i in range(len(ttrees)):
-        x = rnp.tree2array(ttrees[i], branches)
-        struct_arrays.append(x)
-        rec_arrays.append(x.view(np.recarray))
+        rec.append(rnp.tree2rec(ttrees[i], branches))
 
-    return rnp.stack(rec_arrays, fields=branches)
+    return rnp.rec2array(rnp.stack(rec, fields=branches), fields=branches)
 
 
 def ttrees_to_one_hot(ttrees):
@@ -50,20 +45,21 @@ def ttrees_to_binary(signal_ttree, background_ttree):
     return binary
 
 
-def ttrees_to_arrays(ttrees, branches):
+def ttrees_to_internal(ttrees, branches, binary=False):
     """Combines concatenation with creating a one_hot array."""
-    one_hot = ttrees_to_one_hot(ttrees)
+    data = concat_ttrees_to_array(ttrees, branches)
+    if binary:
+        labels = ttrees_to_binary(ttrees[0], ttrees[1])
+    else:
+        labels = ttrees_to_one_hot(ttrees)
+    classes = len(ttrees)
 
-    x = concat_ttrees_to_array(ttrees, branches)
-
-    return struct_array_to_array(x), one_hot
-
-
-def struct_array_to_array(struct_array):
-    """Converts a structured array to an array."""
-    return struct_array.view((np.float32, len(struct_array.dtype.names)))
+    combined = data_set.DataSet(data, labels, classes)
+    return combined
 
 
+"""
+Planning to move?
 def join_struct_arrays(arrays):
     sizes = np.array([a.itemsize for a in arrays])
     offsets = np.r_[0, sizes.cumsum()]
@@ -78,3 +74,4 @@ def join_struct_arrays(arrays):
 def add_branch_to_array(struct_array, branch, tree_name):
     temp_array = join_struct_arrays([struct_array, branch])
     return array2tree(temp_array, name=tree_name)
+"""
