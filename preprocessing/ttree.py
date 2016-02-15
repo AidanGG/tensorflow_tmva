@@ -46,7 +46,7 @@ def ttrees_to_binary(signal_ttree, background_ttree):
 
 
 def ttrees_to_internal(ttrees, branches, binary=False):
-    """Combines concatenation with creating a one_hot array."""
+    """Converts the TTrees to the main data structure."""
     data = concat_ttrees_to_array(ttrees, branches)
     if binary:
         labels = ttrees_to_binary(ttrees[0], ttrees[1])
