@@ -33,6 +33,7 @@ def ttrees_to_one_hot(ttrees):
 
 
 def ttrees_to_binary(signal_ttree, background_ttree):
+    """Creates a binary array (-1 to 1) from a signal and background TTree."""
     entries = signal_ttree.GetEntries() + background_ttree.GetEntries()
 
     binary = np.zeros((entries, 1))
@@ -41,7 +42,7 @@ def ttrees_to_binary(signal_ttree, background_ttree):
         binary[i, 0] = 1
 
     for j in range(background_ttree.GetEntries()):
-        binary[i + j] = -1
+        binary[i + j, 0] = -1
 
     return binary
 
