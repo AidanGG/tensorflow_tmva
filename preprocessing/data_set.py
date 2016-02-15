@@ -4,20 +4,20 @@ import numpy as np
 class DataSet(object):
     """Based on the code provided in TensorFlow's MNIST example."""
 
-    def __init__(self, data, one_hot):
+    def __init__(self, data, labels, classes):
         self._data = data
-        self._one_hot = one_hot
+        self._labels = labels
         self._data_points = data.shape[0]
         self._dimensions = data.shape[1]
-        self._classes = one_hot[1]
+        self._classes = classes
         self._epochs_completed = 0
         self._index_in_epoch = 0
 
     def data(self):
         return self._data
 
-    def one_hot(self):
-        return self._one_hot
+    def labels(self):
+        return self._labels
 
     def data_points(self):
         return self._data_points
@@ -39,9 +39,9 @@ class DataSet(object):
             perm = np.arange(self._data_points)
             np.random.shuffle(perm)
             self._data = self._data[perm]
-            self._one_hot = self._one_hot[perm]
+            self._labels = self._labels[perm]
             start = 0
             self._index_in_epoch = batch_size
             assert batch_size <= self._data_points
         end = self._index_in_epoch
-        return self._data[start:end], self._one_hot[start:end]
+        return self._data[start:end], self._labels[start:end]
