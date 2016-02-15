@@ -5,6 +5,8 @@ from root_numpy.testdata import get_filepath
 
 
 def concat_ttrees_to_array(ttrees, branches=None):
+    """Concatenates multiple TTrees of different classes into one structured
+    array."""
     for i in range(len(ttrees)):
         if i == 0:
             x = tree2array(ttrees[i], branches)
@@ -15,6 +17,7 @@ def concat_ttrees_to_array(ttrees, branches=None):
 
 
 def ttrees_to_one_hot(ttrees):
+    """Creates a one-hot array from TTrees representing different classes."""
     entries = 0
     for i in range(len(ttrees)):
         entries += ttrees[i].GetEntries()
@@ -27,6 +30,20 @@ def ttrees_to_one_hot(ttrees):
             entry += 1
 
     return one_hot
+
+
+def ttrees_to_binary(signal_ttree, background_ttree):
+    entries = signal_ttree.GetEntries() + background_ttree.GetEntries()
+
+    binary = np.zeros((entries, 1))
+
+    for i in range(signal_ttree.GetEntries()):
+        binary[i, 0] = 1
+
+    for j in range(background_ttree.GetEntries()):
+        binary[i + j] = -1
+
+    return binary
 
 
 def ttrees_to_arrays(ttrees, branches):
@@ -47,7 +64,7 @@ def join_struct_arrays(arrays):
     n = len(arrays[0])
     joint = np.empty((n, offsets[-1]), dtype=np.uint8)
     for a, size, offset in zip(arrays, sizes, offsets):
-        joint[:, offset:offset+size] = a.view(np.uint8).reshape(n, size)
+        joint[:, offset:offset + size] = a.view(np.uint8).reshape(n, size)
     dtype = sum((a.dtype.descr for a in arrays), [])
     return joint.ravel().view(dtype)
 
