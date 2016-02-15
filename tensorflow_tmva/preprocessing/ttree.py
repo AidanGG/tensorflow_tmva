@@ -40,7 +40,7 @@ def ttrees_to_binary(signal_ttree, background_ttree):
         binary[i, 0] = 1
 
     for j in range(background_ttree.GetEntries()):
-        binary[i + j, 0] = -1
+        binary[i + j + 1, 0] = -1
 
     return binary
 
