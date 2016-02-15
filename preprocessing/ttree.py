@@ -1,5 +1,6 @@
 import ROOT
 import numpy as np
+import root_numpy as rnp
 from root_numpy import root2array, root2rec, tree2rec, tree2array, array2tree
 from root_numpy.testdata import get_filepath
 
@@ -7,13 +8,15 @@ from root_numpy.testdata import get_filepath
 def concat_ttrees_to_array(ttrees, branches=None):
     """Concatenates multiple TTrees of different classes into one structured
     array."""
-    for i in range(len(ttrees)):
-        if i == 0:
-            x = tree2array(ttrees[i], branches)
-        else:
-            x = np.hstack((x, tree2array(ttrees[i], branches)))
+    struct_arrays = []
+    rec_arrays = []
 
-    return x
+    for i in range(len(ttrees)):
+        x = rnp.tree2array(ttrees[i], branches)
+        struct_arrays.append(x)
+        rec_arrays.append(x.view(np.recarray))
+
+    return rnp.stack(rec_arrays, fields=branches)
 
 
 def ttrees_to_one_hot(ttrees):
@@ -48,6 +51,7 @@ def ttrees_to_binary(signal_ttree, background_ttree):
 
 
 def ttrees_to_arrays(ttrees, branches):
+    """Combines concatenation with creating a one_hot array."""
     one_hot = ttrees_to_one_hot(ttrees)
 
     x = concat_ttrees_to_array(ttrees, branches)
@@ -56,6 +60,7 @@ def ttrees_to_arrays(ttrees, branches):
 
 
 def struct_array_to_array(struct_array):
+    """Converts a structured array to an array."""
     return struct_array.view((np.float32, len(struct_array.dtype.names)))
 
 
