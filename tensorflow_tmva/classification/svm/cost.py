@@ -6,7 +6,7 @@ def kernel_tensor(training, inputs, gamma):
     tiled_training = tf.tile(tf.expand_dims(training, 1), [1, inputs, 1])
     distances = tf.reduce_sum(tf.square(tf.sub(tf.transpose(
         tiled_training, perm=[1, 0, 2]), tiled_training)), reduction_indices=2)
-    kernel = tf.exp(tf.neg(gamma) * distance)
+    kernel = tf.exp(tf.neg(gamma) * distances)
 
     return kernel
 
@@ -19,11 +19,11 @@ def kernelised_cost(training, classes, inputs, C=1, gamma=1):
     kernel = kernel_tensor(training, inputs, gamma)
 
     x = tf.matmul(tf.matmul(beta, kernel, transpose_a=True), beta) / (2.0 * C)
-    y = tf.sub(tf.ones([1]), tf.mul(classes, tf.sum(
+    y = tf.sub(tf.ones([1]), tf.mul(classes, tf.add(
         tf.matmul(kernel, beta, transpose_a=True), offset)))
     z = tf.reduce_sum(tf.reduce_max(
         tf.concat(1, [y, tf.zeros_like(y)]), reduction_indices=1))
-    cost = tf.sum(x, z)
+    cost = tf.add(x, z)
 
     return beta, offset, cost
 
