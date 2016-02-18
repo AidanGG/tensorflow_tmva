@@ -40,14 +40,14 @@ def unkernelised_cost(training, classes, dims, C=1):
     offset = tf.Variable(tf.zeros([1]))
 
     x = tf.matmul(w, w, transpose_a=True) / 2.0
-    y = tf.sub(tf.ones([1]), tf.mul(classes, tf.sum(
-        tf.matmul(training, w, transpose_b=True), offset)))
+    y = tf.sub(tf.ones([1]), tf.mul(classes, tf.add(
+        tf.matmul(training, w, transpose_b=False), offset)))
     z = tf.reduce_sum(tf.reduce_max(
         tf.concat(1, [y, tf.zeros_like(y)]), reduction_indices=1)) * C
 
-    cost = tf.sum(x, z)
+    cost = tf.add(x, z)
 
-    return beta, offset, cost
+    return w, offset, cost
 
 
 def decide(testing, w, offset):
