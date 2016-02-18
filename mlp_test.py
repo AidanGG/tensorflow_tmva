@@ -17,7 +17,8 @@ x, y, W, b = tensorflow_tmva.classification.mlp.model.model(
 y_ = tf.placeholder(tf.float32, [None, 10])
 cost = tensorflow_tmva.classification.mlp.cost.cost(y, y_, estimator_type="CE")
 
-train_step = tensorflow_tmva.classification.mlp.training.training(cost)
+train_step = tensorflow_tmva.classification.mlp.training.training(
+    cost, learning_rate=0.01)
 init = tf.initialize_all_variables()
 sess = tf.Session()
 sess.run(init)
@@ -29,4 +30,4 @@ for i in range(1000):
 correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-print sess.run(accuracy, feed_dict={x: my_test.data, y_: my_test.labels})
+print sess.run(accuracy, feed_dict={x: my_test.data(), y_: my_test.labels()})
