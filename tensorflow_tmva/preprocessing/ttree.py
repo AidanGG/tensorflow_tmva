@@ -37,10 +37,10 @@ def ttrees_to_binary(signal_ttree, background_ttree):
     binary = np.zeros((entries, 1))
 
     for i in range(signal_ttree.GetEntries()):
-        binary[i, 0] = 1
+        binary[i, 0] = 1.0
 
     for j in range(background_ttree.GetEntries()):
-        binary[i + j + 1, 0] = -1
+        binary[i + j + 1, 0] = -1.0
 
     return binary
 
