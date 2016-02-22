@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def unkernelised_cost(training, classes, dims, C=1):
+def cost(training, classes, dims, C=1):
     """Returns the unkernelised cost to be minimised."""
     w = tf.Variable(tf.zeros([dims, 1]))
     offset = tf.Variable(tf.zeros([1]))

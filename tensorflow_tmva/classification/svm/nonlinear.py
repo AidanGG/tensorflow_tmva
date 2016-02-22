@@ -12,7 +12,7 @@ def kernel_tensor(training, inputs, gamma):
     return kernel
 
 
-def kernelised_cost(training, classes, inputs, C=1, gamma=1):
+def cost(training, classes, inputs, C=1, gamma=1):
     """Returns the kernelised cost to be minimised."""
     beta = tf.Variable(tf.zeros([inputs, 1]))
     offset = tf.Variable(tf.zeros([1]))
