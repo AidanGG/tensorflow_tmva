@@ -3,7 +3,7 @@ import classification.mlp.model
 import classification.mlp.cost
 import classification.mlp.training
 import preprocessing.data_set
-import input_data
+from tensorflow.examples.tutorials.mnist import input_data
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 my_train = preprocessing.data_set.DataSet(
