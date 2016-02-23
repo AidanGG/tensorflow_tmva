@@ -10,6 +10,14 @@ def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
     return [tiled_a, tiled_b]
 
 
+def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
+    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
+
+    kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
+
+    return kernel
+
+
 def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
     cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
 
@@ -20,31 +28,15 @@ def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
     return kernel
 
 
-def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
-    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
-
-    kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
-
-    return kernel
-
-
-def kernel_tensor(training, inputs, gamma):
-    """Creates the Gaussian kernel tensor from the training data."""
-    tiled_training = tf.tile(tf.expand_dims(training, 1), [1, inputs, 1])
-    distances = tf.reduce_sum(tf.square(tf.sub(tf.transpose(
-        tiled_training, perm=[1, 0, 2]), tiled_training)), reduction_indices=2)
-    kernel = tf.exp(tf.mul(tf.neg(
-        tf.constant([gamma], dtype=tf.float32)), distances))
-
-    return kernel
-
-
-def cost(training, classes, inputs, C=1, gamma=1):
+def cost(training, classes, inputs, kernel_type="gaussian", C=1, gamma=1):
     """Returns the kernelised cost to be minimised."""
     beta = tf.Variable(tf.zeros([inputs, 1]))
     offset = tf.Variable(tf.zeros([1]))
 
-    kernel = kernel_tensor(training, inputs, gamma)
+    if kernel_type == "linear":
+        kernel = linear_kernel(training, inputs, training, inputs)
+    elif kernel_type == "gaussian":
+        kernel = gaussian_kernel(training, inputs, training, inputs, gamma)
 
     x = tf.reshape(tf.div(tf.matmul(tf.matmul(
         beta, kernel, transpose_a=True), beta), tf.constant([2.0])), [1])
@@ -58,9 +50,15 @@ def cost(training, classes, inputs, C=1, gamma=1):
     return beta, offset, cost
 
 
-"""
-Not ready yet
-def decide(testing, beta, offset):
-    # Tests a set of test instances.
-    return tf.sign(tf.add(tf.matmul(testing, beta), offset))
-"""
+def decide(training, training_instances, testing, testing_instances,
+           beta, offset, kernel_type="gaussian", gamma=1):
+    """Tests a set of test instances."""
+
+    if kernel_type == "linear":
+        kernel = linear_kernel(
+            testing, testing_instances, training, training_instances)
+    elif kernel_type == "gaussian":
+        kernel = gaussian_kernel(
+            testing, testing_instances, training, training_instances, gamma)
+
+    return tf.sign(tf.add(tf.matmul(kernel, beta), offset))
