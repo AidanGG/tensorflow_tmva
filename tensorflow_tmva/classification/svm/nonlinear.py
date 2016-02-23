@@ -49,19 +49,18 @@ def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
 
 
 def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
-    cross_matrices = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
+    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
 
     kernel = tf.exp(tf.mul(tf.reduce_sum(tf.square(
-        tf.sub(cross_matrices[0], cross_matrices[1])), reduction_indices=2),
+        tf.sub(cross[0], cross[1])), reduction_indices=2),
         tf.neg(tf.constant(gamma, dtype=tf.float32))))
 
     return kernel
 
 
 def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
-    cross_matrices = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
+    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
 
-    kernel = tf.reduce_sum(
-        tf.mul(cross_matrices[0], cross_matrices[1]), reduction_indices=2)
+    kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
 
     return kernel
