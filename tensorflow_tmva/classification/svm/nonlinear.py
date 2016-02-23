@@ -1,6 +1,33 @@
 import tensorflow as tf
 
 
+def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
+    expanded_a = tf.expand_dims(tensor_a, 1)
+    expanded_b = tf.expand_dims(tensor_b, 0)
+    tiled_a = tf.tile(expanded_a, tf.constant([1, b_inputs, 1]))
+    tiled_b = tf.tile(expanded_b, tf.constant([a_inputs, 1, 1]))
+
+    return [tiled_a, tiled_b]
+
+
+def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
+    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
+
+    kernel = tf.exp(tf.mul(tf.reduce_sum(tf.square(
+        tf.sub(cross[0], cross[1])), reduction_indices=2),
+        tf.neg(tf.constant(gamma, dtype=tf.float32))))
+
+    return kernel
+
+
+def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
+    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
+
+    kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
+
+    return kernel
+
+
 def kernel_tensor(training, inputs, gamma):
     """Creates the Gaussian kernel tensor from the training data."""
     tiled_training = tf.tile(tf.expand_dims(training, 1), [1, inputs, 1])
@@ -37,30 +64,3 @@ def decide(testing, beta, offset):
     # Tests a set of test instances.
     return tf.sign(tf.add(tf.matmul(testing, beta), offset))
 """
-
-
-def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
-    expanded_a = tf.expand_dims(tensor_a, 1)
-    expanded_b = tf.expand_dims(tensor_b, 0)
-    tiled_a = tf.tile(expanded_a, tf.constant([1, b_inputs, 1]))
-    tiled_b = tf.tile(expanded_b, tf.constant([a_inputs, 1, 1]))
-
-    return [tiled_a, tiled_b]
-
-
-def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
-    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
-
-    kernel = tf.exp(tf.mul(tf.reduce_sum(tf.square(
-        tf.sub(cross[0], cross[1])), reduction_indices=2),
-        tf.neg(tf.constant(gamma, dtype=tf.float32))))
-
-    return kernel
-
-
-def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
-    cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
-
-    kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
-
-    return kernel
