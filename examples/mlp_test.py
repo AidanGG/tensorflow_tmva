@@ -1,23 +1,23 @@
 import tensorflow as tf
-import tensorflow_tmva.classification.mlp.model
-import tensorflow_tmva.classification.mlp.cost
-import tensorflow_tmva.classification.mlp.training
-import tensorflow_tmva.preprocessing.data_set
+import classification.mlp.model
+import classification.mlp.cost
+import classification.mlp.training
+import preprocessing.data_set
 import input_data
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
-my_train = tensorflow_tmva.preprocessing.data_set.DataSet(
+my_train = preprocessing.data_set.DataSet(
     mnist.train.images, mnist.train.labels, 10)
-my_test = tensorflow_tmva.preprocessing.data_set.DataSet(
+my_test = preprocessing.data_set.DataSet(
     mnist.test.images, mnist.test.labels, 10)
 
-x, y, W, b = tensorflow_tmva.classification.mlp.model.model(
+x, y, W, b = classification.mlp.model.model(
     784, 10, [], neuron_type="linear", neuron_input_type="sum")
 
 y_ = tf.placeholder(tf.float32, [None, 10])
-cost = tensorflow_tmva.classification.mlp.cost.cost(y, y_, estimator_type="CE")
+cost = classification.mlp.cost.cost(y, y_, estimator_type="CE")
 
-train_step = tensorflow_tmva.classification.mlp.training.training(
+train_step = classification.mlp.training.training(
     cost, learning_rate=0.01)
 init = tf.initialize_all_variables()
 sess = tf.Session()
