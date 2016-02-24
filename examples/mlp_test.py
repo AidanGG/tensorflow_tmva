@@ -1,9 +1,10 @@
 import tensorflow as tf
-import classification.mlp.model
+from tensorflow.examples.tutorials.mnist import input_data
+
 import classification.mlp.cost
+import classification.mlp.model
 import classification.mlp.training
 import preprocessing.data_set
-from tensorflow.examples.tutorials.mnist import input_data
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 my_train = preprocessing.data_set.DataSet(
@@ -17,8 +18,7 @@ x, y, W, b = classification.mlp.model.model(
 y_ = tf.placeholder(tf.float32, [None, 10])
 cost = classification.mlp.cost.cost(y, y_, estimator_type="CE")
 
-train_step = classification.mlp.training.training(
-    cost, learning_rate=0.01)
+train_step = classification.mlp.training.training(cost, learning_rate=0.01)
 init = tf.initialize_all_variables()
 sess = tf.Session()
 sess.run(init)

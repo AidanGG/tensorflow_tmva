@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 
 def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,

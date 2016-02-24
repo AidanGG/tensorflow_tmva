@@ -1,9 +1,10 @@
-import ROOT
-import tensorflow as tf
-import preprocessing.ttree
-import preprocessing.data_set
-import classification.svm.svm
 import numpy as np
+import tensorflow as tf
+
+import classification.svm.svm
+import preprocessing.data_set
+import preprocessing.ttree
+import ROOT
 
 signal = ROOT.TNtuple("ntuple", "ntuple", "x:y:signal")
 background = ROOT.TNtuple("ntuple", "ntuple", "x:y:signal")
@@ -48,12 +49,12 @@ test = np.random.normal(loc=1, size=[100, 2])
 test_tensor = tf.placeholder(tf.float32, [None, 2])
 
 model = classification.svm.svm.decide(
-    input_tensor, 400, test_tensor, 100, beta, offset,
-    kernel_type="gaussian", gamma=1)
+    input_tensor, 400, test_tensor, 100, beta, offset, kernel_type="gaussian",
+    gamma=1)
 
 print(sess.run(beta))
 print(sess.run(offset))
 print(sess.run(model, feed_dict={
       input_tensor: binary.data(), test_tensor: test}))
-print(sess.run(tf.reduce_sum(model) / 100, feed_dict={
-      input_tensor: binary.data(), test_tensor: test}))
+print(sess.run(tf.reduce_sum(model) / 100,
+               feed_dict={input_tensor: binary.data(), test_tensor: test}))

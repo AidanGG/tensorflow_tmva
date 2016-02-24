@@ -1,7 +1,8 @@
-import ROOT
 import numpy as np
-import root_numpy as rnp
+
 import data_set
+import ROOT
+import root_numpy as rnp
 
 
 def concat_ttrees_to_array(ttrees, branches=None):
