@@ -5,12 +5,12 @@ import ROOT
 
 
 def join_struct_arrays(arrays):
-    newdtype = sum((a.dtype.descr for a in arrays), [])
-    newrecarray = np.empty(len(arrays[0]), dtype=newdtype)
-    for a in arrays:
-        for name in a.dtype.names:
-            newrecarray[name] = a[name]
-    return newrecarray
+    new_dtype = sum((a.dtype.descr for a in arrays), [])
+    new_recarray = np.empty(len(arrays[0]), dtype=new_dtype)
+    for array in arrays:
+        for name in array.dtype.names:
+            new_recarray[name] = array[name]
+    return new_recarray
 
 
 def name_classifier_branches(array, branch_names):
