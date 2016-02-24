@@ -1,8 +1,8 @@
 import numpy as np
+import root_numpy as rnp
 
 import data_set
 import ROOT
-import root_numpy as rnp
 
 
 def concat_ttrees_to_array(ttrees, branches=None):
@@ -57,22 +57,3 @@ def ttrees_to_internal(ttrees, branches, binary=False):
 
     combined = data_set.DataSet(data, labels, classes)
     return combined
-
-
-"""
-Planning to move?
-def join_struct_arrays(arrays):
-    sizes = np.array([a.itemsize for a in arrays])
-    offsets = np.r_[0, sizes.cumsum()]
-    n = len(arrays[0])
-    joint = np.empty((n, offsets[-1]), dtype=np.uint8)
-    for a, size, offset in zip(arrays, sizes, offsets):
-        joint[:, offset:offset + size] = a.view(np.uint8).reshape(n, size)
-    dtype = sum((a.dtype.descr for a in arrays), [])
-    return joint.ravel().view(dtype)
-
-
-def add_branch_to_array(struct_array, branch, tree_name):
-    temp_array = join_struct_arrays([struct_array, branch])
-    return array2tree(temp_array, name=tree_name)
-"""
