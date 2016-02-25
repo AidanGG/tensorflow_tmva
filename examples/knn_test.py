@@ -18,16 +18,19 @@ for i in range(10000):
 data = preprocessing.ttree.ttrees_to_internal(
     [signal, background], ["x", "y", "z"], binary=False)
 
-test = np.array([[0.5, 0.5, 0.5]])
+test = np.array([[0., 0., 0.]])
 
 scales = knn.scale(data.data(), 0.9)
-print("%r" % scales)
 
-
-train_tensor, labels_tensor, test_tensor, neighbours = knn.model_single(
-    3, 2, 0.9, scales, 20)
+train_tensor, labels_tensor, test_tensor, neighbours, d = knn.model_single(
+    3, 2, 0.9, scales, 100)
 
 sess = tf.Session()
-print(sess.run(neighbours,
-               feed_dict={train_tensor: data.data(),
-                          labels_tensor: data.labels(), test_tensor: test}))
+
+print("Searching for 100 nearest neighbours")
+
+results = sess.run(neighbours,
+                   feed_dict={train_tensor: data.data(),
+                              labels_tensor: data.labels(), test_tensor: test})
+print("Signal neighbours: %d" % results[0])
+print("Background neighbours: %d" % results[1])
