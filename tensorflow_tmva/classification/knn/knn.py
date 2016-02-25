@@ -56,7 +56,8 @@ def model_single(input_dims, output_dims, scale_frac, scales, nkNN):
         else:
             neighbour_one_hot = tf.concat(0, [neighbour_one_hot, class_slice])
 
-    return tf.reduce_sum(neighbour_one_hot, reduction_indices=0)
+    return training, one_hot, test, tf.reduce_sum(neighbour_one_hot,
+                                                  reduction_indices=0)
 
 
 def metric_single(training, test, scale_frac, scales):
