@@ -22,7 +22,7 @@ test = np.array([[0., 0., 0.]])
 
 scales = knn.scale(data.data(), 0.9)
 
-train_tensor, labels_tensor, test_tensor, neighbours, d = knn.model_single(
+train_tensor, labels_tensor, test_tensor, neighbours = knn.model_single(
     3, 2, 0.9, scales, 100)
 
 sess = tf.Session()
