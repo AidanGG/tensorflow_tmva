@@ -1,10 +1,10 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 
 def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,
         kernel="Gaus", use_kernel=False):
-    """TO DO"""
+    """TO DO. This function should wrap everything up."""
     return None
 
 
@@ -44,7 +44,7 @@ def model_single(input_dims, output_dims, scale_frac, scales, nkNN):
         # Cuts the nearest neighbour out of the distances set.
         start = tf.slice(remaining_distances, tf.to_int64([0, 0]), min_slice)
         end = tf.slice(remaining_distances, min_slice + [1, 1], [-1, -1])
-        remaining_training = tf.concat(0, [start, end])
+        remaining_distances = tf.concat(0, [start, end])
 
         # Cuts the nearest neighbour's class and records it.
         start = tf.slice(remaining_one_hot, tf.to_int64([0, 0]), min_slice)
@@ -56,7 +56,8 @@ def model_single(input_dims, output_dims, scale_frac, scales, nkNN):
         else:
             neighbour_one_hot = tf.concat(0, [neighbour_one_hot, class_slice])
 
-    return tf.reduce_sum(neighbour_one_hot, reduction_indices=0)
+    return training, one_hot, test, tf.reduce_sum(neighbour_one_hot,
+                                                  reduction_indices=0)
 
 
 def metric_single(training, test, scale_frac, scales):
@@ -109,7 +110,15 @@ def scale(training, scale_frac):
 
 
 def trim(training, one_hot):
-    """Trims the training data so there are an equal number in each class."""
+    """Trims the training data so there are an equal number in each class.
+
+    Arguments:
+    training -- a NumPy array holding the training data
+    one_hot -- a NumPy array for the one-hot matrix
+
+    Returns:
+    The appropriately trimmed training and one-hot arrays
+    """
     first_indices = []
     second_indices = []
 
