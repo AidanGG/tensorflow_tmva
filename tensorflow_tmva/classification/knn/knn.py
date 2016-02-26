@@ -4,7 +4,7 @@ import tensorflow as tf
 
 def knn(training, one_hot, testing, nkNN=20, scale_frac=0.8, trim=False,
         kernel="Gaus", use_kernel=False):
-    """TO DO"""
+    """TO DO. This function should wrap everything up."""
     return None
 
 
@@ -110,7 +110,15 @@ def scale(training, scale_frac):
 
 
 def trim(training, one_hot):
-    """Trims the training data so there are an equal number in each class."""
+    """Trims the training data so there are an equal number in each class.
+
+    Arguments:
+    training -- a NumPy array holding the training data
+    one_hot -- a NumPy array for the one-hot matrix
+
+    Returns:
+    The appropriately trimmed training and one-hot arrays
+    """
     first_indices = []
     second_indices = []
 

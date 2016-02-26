@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
+    """Tiles two tensors in perpendicular dimensions."""
     expanded_a = tf.expand_dims(tensor_a, 1)
     expanded_b = tf.expand_dims(tensor_b, 0)
     tiled_a = tf.tile(expanded_a, tf.constant([1, b_inputs, 1]))
@@ -11,6 +12,8 @@ def cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs):
 
 
 def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
+    """Returns the linear kernel (dot product) matrix of two matrices of vectors
+    element-wise."""
     cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
 
     kernel = tf.reduce_sum(tf.mul(cross[0], cross[1]), reduction_indices=2)
@@ -19,6 +22,8 @@ def linear_kernel(tensor_a, a_inputs, tensor_b, b_inputs):
 
 
 def gaussian_kernel(tensor_a, a_inputs, tensor_b, b_inputs, gamma):
+    """Returns the Gaussian kernel matrix of two matrices of vectors
+    element-wise."""
     cross = cross_matrices(tensor_a, a_inputs, tensor_b, b_inputs)
 
     kernel = tf.exp(tf.mul(tf.reduce_sum(tf.square(
